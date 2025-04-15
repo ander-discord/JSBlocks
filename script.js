@@ -44,21 +44,20 @@ function drawSprite() {
     ctx.translate(sprite.x + canvas.width / 2, sprite.y * -1 + canvas.height / 2);
     ctx.rotate(sprite.rotation * Math.PI / 180);
 
-    ctx.fillStyle = 'orange';
+    ctx.fillStyle = 'cyan';
     ctx.fillRect(-25, -25, 50, 50);
 
     ctx.restore();
 }
 
 function tick() {
-    console.log("Ticking")
     try {
         if (!hasExecuted) {
             eval(codeInput.value); 
             hasExecuted = true;
         }
         drawSprite();  
-        spriteLabel.innerText = `x:${sprite.x} y:${sprite.y}`;  
+        spriteLabel.innerText = `x:${Math.round(sprite.x)} y:${Math.round(sprite.y)}`;  
     } catch (e) {
         console.error('Error in code:', e);
     }
@@ -105,12 +104,12 @@ if (data) {
     codeInput.value = Data.code; 
     if (Data.play) { setInterval(tick, 1000 / 60); }
     setTimeout(() => {
-        codeInput.focus();
+        if (!Data.play) {codeInput.focus()};
     }, 100); 
 }
 
 const spriteLabel = document.createElement('p');
-spriteLabel.innerText = `x:${sprite.x} y:${sprite.y}`;
+spriteLabel.innerText = `x:${Math.round(sprite.x)} y:${Math.round(sprite.y)}`;
 spriteLabel.style.left = '960px';
 spriteLabel.style.top = '20px';
 spriteLabel.style.position = 'fixed';
