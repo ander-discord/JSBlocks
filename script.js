@@ -51,13 +51,14 @@ function drawSprite() {
 }
 
 function tick() {
+    console.log("Ticking")
     try {
         if (!hasExecuted) {
-            eval(codeInput.value);
-            drawSprite();
-            spriteLabel.innerText = `x:${sprite.x} y:${sprite.y}`;
+            eval(codeInput.value); 
             hasExecuted = true;
         }
+        drawSprite();  
+        spriteLabel.innerText = `x:${sprite.x} y:${sprite.y}`;  
     } catch (e) {
         console.error('Error in code:', e);
     }
@@ -101,8 +102,8 @@ const data = params.get('data');
 
 if (data) {
     const Data = JSON.parse(decodeURIComponent(data));
-    codeInput.value = Data.code;      
-    if (Data.play) { setInterval(tick, 100); }
+    codeInput.value = Data.code; 
+    if (Data.play) { setInterval(tick, 1000 / 60); }
     setTimeout(() => {
         codeInput.focus();
     }, 100); 
