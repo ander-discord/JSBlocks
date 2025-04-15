@@ -41,7 +41,7 @@ function drawSprite() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
-    ctx.translate(sprite.x + canvas.width / 2, sprite.y + canvas.height / 2);
+    ctx.translate(sprite.x + canvas.width / 2, sprite.y * -1 + canvas.height / 2);
     ctx.rotate(sprite.rotation * Math.PI / 180);
 
     ctx.fillStyle = 'orange';
