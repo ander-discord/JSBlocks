@@ -4,7 +4,11 @@ let sprite = {
     rotation: 0,
 };
 
+let intervalId = null;
 let hasExecuted = false;
+
+let mouseX = 0;
+let mouseY = 0;
 
 document.body.style.backgroundColor = '#121212';
 document.body.style.color = '#E0E0E0';
@@ -15,6 +19,7 @@ codeInput.style.position = 'fixed';
 codeInput.style.left = '0';
 codeInput.style.top = '0';
 codeInput.style.width = '600px';
+codeInput.style.fontSize = '100px';
 codeInput.style.height = '100vh';
 codeInput.style.fontSize = '24px';
 codeInput.style.padding = '10px';
@@ -26,14 +31,22 @@ codeInput.style.color = '#E0E0E0';
 codeInput.style.border = '1px solid #444';
 
 const canvas = document.createElement('canvas');
-canvas.width = 980;
-canvas.height = 720;
+canvas.width = 480;
+canvas.height = 360;
 canvas.style.position = 'fixed';
-canvas.style.left = '780px';
+canvas.style.right = '100px';
 canvas.style.top = '120px';
-canvas.style.background = '#333';
-canvas.style.borderLeft = '2px solid #444';
+canvas.style.backgroundColor = '#999';
+canvas.id = 'screen';
+canvas.style.borderRadius = '5px';
+canvas.style.borderLeft = '2px solid #FFF'
 document.body.appendChild(canvas);
+
+canvas.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left - canvas.width / 2;
+    mouseY = -(event.clientY - rect.top - canvas.height / 2);
+});
 
 const ctx = canvas.getContext('2d');
 
@@ -57,66 +70,63 @@ function tick() {
             hasExecuted = true;
         }
         drawSprite();  
-        spriteLabel.innerText = `x:${Math.round(sprite.x)} y:${Math.round(sprite.y)}`;  
     } catch (e) {
         console.error('Error in code:', e);
     }
 }
 
-const actionButton = document.createElement('button');
-actionButton.textContent = 'R';
-actionButton.style.position = 'fixed';
-actionButton.style.left = '790px';
-actionButton.style.top = '60px';
-actionButton.style.width = '50px';
-actionButton.style.height = '50px';
-actionButton.style.fontSize = '20px';
-actionButton.style.padding = '10px 20px';
-actionButton.style.color = 'black';
-actionButton.style.border = 'none';
-actionButton.style.borderRadius = '5px';
-actionButton.addEventListener('click', () => { datag(true); });
+const startButton = document.createElement('button');
+startButton.textContent = 'Start';
+startButton.style.position = 'fixed';
+startButton.style.right = '470px';
+startButton.style.top = '60px';
+startButton.style.width = '100px';
+startButton.style.height = '50px';
+startButton.style.fontSize = '20px';
+startButton.style.padding = '10px 20px';
+startButton.style.border = 'none';
+startButton.style.color = '#E0E0E0';
+startButton.style.backgroundColor = '#1E1E1E';
+startButton.style.border = 'solid 2px #E0E0E0'
+startButton.style.borderRadius = '5px';
 
-function datag(playf) {
-    location.href = location.pathname + '?data=' + encodeURIComponent(JSON.stringify({code: codeInput.value, play: playf}));
+startButton.addEventListener('click', () => { setInterval(tick, 1000 / 60); startButton.textContent = 'Running'; startButton.style.width = '110px'; startButton.style.opacity =  '0.4'; stopButton.style.color = 'white'; stopButton.style.opacity = '1';; });
+
+function saveg() {
+    location.href = location.pathname + '?data=' + encodeURIComponent(JSON.stringify({code: codeInput.value, sprited: sprite}));
 }
 
 const stopButton = document.createElement('button');
-stopButton.textContent = 'S';
+stopButton.textContent = 'Stop';
 stopButton.style.position = 'fixed';
-stopButton.style.left = '850px';
+stopButton.style.right = '360px';
 stopButton.style.top = '60px';
-stopButton.style.width = '50px';
+stopButton.style.width = '90px';
 stopButton.style.height = '50px';
 stopButton.style.fontSize = '20px';
 stopButton.style.padding = '10px 20px';
-stopButton.style.color = 'black';
 stopButton.style.border = 'none';
 stopButton.style.borderRadius = '5px';
+stopButton.style.color = '#E0E0E0';
+stopButton.style.backgroundColor = '#1E1E1E';
+stopButton.style.border = 'solid 2px #E0E0E0'
+stopButton.style.opacity = '0.2';
 
-stopButton.addEventListener('click', () => { datag(false) });
+stopButton.addEventListener('click', () => { saveg() });
 
 const params = new URLSearchParams(window.location.search);
 const data = params.get('data');
 
 if (data) {
     const Data = JSON.parse(decodeURIComponent(data));
-    codeInput.value = Data.code; 
-    if (Data.play) { setInterval(tick, 1000 / 60); }
+    if (Data.code) {codeInput.value = Data.code}
+    if (Data.sprited) {sprite = Data.sprited}
     setTimeout(() => {
         if (!Data.play) {codeInput.focus()};
     }, 100); 
 }
 
-const spriteLabel = document.createElement('p');
-spriteLabel.innerText = `x:${Math.round(sprite.x)} y:${Math.round(sprite.y)}`;
-spriteLabel.style.left = '960px';
-spriteLabel.style.top = '20px';
-spriteLabel.style.position = 'fixed';
-spriteLabel.style.fontSize = '40px';
-
 document.body.appendChild(codeInput);
-document.body.appendChild(actionButton);
+document.body.appendChild(startButton);
 document.body.appendChild(stopButton);
-document.body.appendChild(spriteLabel);
 drawSprite();
